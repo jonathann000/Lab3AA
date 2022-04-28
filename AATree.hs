@@ -28,8 +28,6 @@ data AATree a
 emptyTree :: AATree a
 emptyTree = Empty
 
-
-
 get :: Ord a => a -> AATree a -> Maybe a
 get _ Empty = Nothing
 get input (Node _ l a r) 
@@ -37,15 +35,8 @@ get input (Node _ l a r)
   | input < a  = get input l
   | otherwise  = get input r
 
-
-
--- You may find it helpful to define
---   split :: AATree a -> AATree a
---   skew  :: AATree a -> AATree a
--- and call these from insert.
-
 split :: AATree a -> AATree a 
-split s@(Node i a x (Node yi b y z@(Node zi _ _ _))) 
+split (Node i a x (Node yi b y z@(Node zi _ _ _))) 
   | i == zi = Node (yi+1) (Node i a x b) y z
 split n = n
 
@@ -54,25 +45,22 @@ skew (Node i (Node xi a x b) y c)
   | i == xi = Node xi a x (Node i b y c)
 skew n = n
 
-
 insert :: Ord a => a -> AATree a -> AATree a
-insert input t@(Node i l v r)
-  | input == v = t
-  | input < v = fixIt (Node i (insert input l) v r)
-  | otherwise = fixIt (Node i l v (insert input r))
+insert input (Node i l v r)
+  | input == v = Empty
+  | input < v = fixIt(Node i (insert input l) v r)
+  | otherwise = fixIt(Node i l v (insert input r))
   where fixIt = split . skew
 insert input Empty = Node 1 Empty input Empty
 
-
 inorder :: AATree a -> [a]
 inorder Empty = []
-inorder (Node i Empty x Empty) = [x]
-inorder (Node i Empty x r)     = x : inorder r 
-inorder (Node i l x r)         = (inorder l ++ (x : inorder r))
+inorder (Node _ Empty x Empty) = [x]
+inorder (Node _ Empty x r)     = x : inorder r 
+inorder (Node _ l x r)         = (inorder l ++ (x : inorder r))
 
 size :: AATree a -> Int
-size Empty = error "Not tree stupid"
-size (Node _ _ x _) = x 
+size n = length (inorder n)
 
 height :: AATree a -> Int
 height Empty = 0
@@ -98,7 +86,11 @@ checkTree root =
 
 -- True if the given list is ordered
 isSorted :: Ord a => [a] -> Bool
-isSorted = error "isSorted not implemented"
+isSorted []       = True
+isSorted [x]      = True
+isSorted (x:y:xs) 
+  | x < y     = isSorted (y:xs)
+  | otherwise = False
 
 -- Check if the invariant is true for a single AA node
 -- You may want to write this as a conjunction e.g.
@@ -107,17 +99,24 @@ isSorted = error "isSorted not implemented"
 --     rightChildOK node &&
 --     rightGrandchildOK node
 -- where each conjunct checks one aspect of the invariant
+
 checkLevels :: AATree a -> Bool
-checkLevels = error "checkLevels not implemented"
+checkLevels Empty = True
+checkLevels node = leftChildOK node &&
+                   rightChildOK node &&
+                   rightGrandchildOK node
 
 isEmpty :: AATree a -> Bool
-isEmpty = error "isEmpty not implemented"
+isEmpty Empty = True
+isEmpty _     = False
 
 leftSub :: AATree a -> AATree a
-leftSub = error "leftSub not implemented"
+leftSub Empty = Empty
+leftSub (Node _ l _ _) = l
 
 rightSub :: AATree a -> AATree a
-rightSub = error "rightSub not implemented"
+rightSub Empty = Empty
+rightSub (Node _ _ _ r) = r
 
 leftChildOK :: AATree a -> Bool
 leftChildOK (Node i (Node li _ _ _) _ _) = li < i
