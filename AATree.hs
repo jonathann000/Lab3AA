@@ -46,8 +46,8 @@ skew (Node i (Node xi a x b) y c)
 skew n = n
 
 insert :: Ord a => a -> AATree a -> AATree a
-insert input (Node i l v r)
-  | input == v = Empty
+insert input n@(Node i l v r)
+  | input == v = n
   | input < v = fixIt(Node i (insert input l) v r)
   | otherwise = fixIt(Node i l v (insert input r))
   where fixIt = split . skew
