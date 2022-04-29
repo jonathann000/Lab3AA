@@ -45,13 +45,13 @@ skew (Node i (Node xi a x b) y c)
   | i == xi = Node xi a x (Node i b y c)
 skew n = n
 
-insert :: Ord a => a -> AATree a -> AATree a
-insert input n@(Node i l v r)
+insert :: Ord a => AATree a -> a -> AATree a
+insert n@(Node i l v r) input 
   | input == v = n
-  | input < v = fixIt(Node i (insert input l) v r)
-  | otherwise = fixIt(Node i l v (insert input r))
+  | input < v = fixIt(Node i (insert l input) v r)
+  | otherwise = fixIt(Node i l v (insert r input))
   where fixIt = split . skew
-insert input Empty = Node 1 Empty input Empty
+insert Empty input = Node 1 Empty input Empty
 
 inorder :: AATree a -> [a]
 inorder Empty = []
@@ -64,7 +64,7 @@ size n = length (inorder n)
 
 height :: AATree a -> Int
 height Empty = 0
-height (Node i _ _ _) = i
+height (Node _ _ _ r) = 1 + height r
 
 --------------------------------------------------------------------------------
 -- Optional function
