@@ -8,8 +8,8 @@
 
 import AATree
 -- O(n log n), foldl = O(n), insert = O(log n), words = O(n). (foldl * insert) + words
-testFold :: String -> AATree String
-testFold s = foldl insert emptyTree (words s)
+stringToTree :: String -> AATree String
+stringToTree s = foldl insert emptyTree (words s)
 
 -- O(n)
 optimalHeight :: AATree a -> Int
@@ -34,7 +34,7 @@ main = do
 
   -- spl it the data into words and build an AA tree
   -- use foldl
-  let tree = testFold contents
+  let tree = stringToTree contents
   
   -- calculate and print statistics
   -- use fromIntegral/ceiling/logBase

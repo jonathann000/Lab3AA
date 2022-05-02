@@ -78,11 +78,18 @@ size Empty = 0
 size n = length (inorder n)
 
 -- O(log n)
+height2 :: AATree a -> Int
+height2 (Node i _ _ _) = i
+
 height :: AATree a -> Int
 height Empty = 0
 height (Node _ l _ r) 
-  | size r > size l  = 1 + height r 
+  | (getLevel r) > (getLevel l)  = 1 + height r
   | otherwise        = 1 + height l
+
+getLevel :: AATree a -> Int
+getLevel Empty = 0
+getLevel (Node i _ _ _) = i
 
 
 --------------------------------------------------------------------------------
