@@ -61,10 +61,12 @@ inorder (Node _ Empty x Empty) = [x]
 inorder (Node _ Empty x r)     = x : inorder r
 inorder (Node _ l x r)         = inorder l ++ (x : inorder r)
 
+-- O(1)
 size :: AATree a -> Int
 size Empty = 0
 size n = length (inorder n)
 
+-- O(log n)
 height :: AATree a -> Int
 height Empty = 0
 height (Node _ l _ r) 
@@ -80,7 +82,7 @@ remove = error "remove not implemented"
 
 --------------------------------------------------------------------------------
 -- Check that an AA tree is ordered and obeys the AA invariants
-
+--(O)
 checkTree :: Ord a => AATree a -> Bool
 checkTree root =
   isSorted (inorder root) &&
@@ -90,7 +92,7 @@ checkTree root =
       | isEmpty x = []
       | otherwise = x:nodes (leftSub x) ++ nodes (rightSub x)
 
--- True if the given list is ordered
+--O(n)
 isSorted :: Ord a => [a] -> Bool
 isSorted []       = True
 isSorted [x]      = True
@@ -106,32 +108,39 @@ isSorted (x:y:xs)
 --     rightGrandchildOK node
 -- where each conjunct checks one aspect of the invariant
 
+--O(1)
 checkLevels :: AATree a -> Bool
 checkLevels Empty = True
 checkLevels node = leftChildOK node &&
                    rightChildOK node &&
                    rightGrandchildOK node
 
+--O(1)
 isEmpty :: AATree a -> Bool
 isEmpty Empty = True
 isEmpty _     = False
 
+--O(1)
 leftSub :: AATree a -> AATree a
 leftSub Empty = Empty
 leftSub (Node _ l _ _) = l
 
+--O(1)
 rightSub :: AATree a -> AATree a
 rightSub Empty = Empty
 rightSub (Node _ _ _ r) = r
 
+--O(1)
 leftChildOK :: AATree a -> Bool
 leftChildOK (Node i (Node li _ _ _) _ _) = li < i
 leftChildOK _ = True
 
+--O(1)
 rightChildOK :: AATree a -> Bool
 rightChildOK (Node i _ _ (Node ir _ _ _)) = ir <= i
 rightChildOK _ = True
 
+--O(1)
 rightGrandchildOK :: AATree a -> Bool
 rightGrandchildOK (Node i _ _ (Node _ _ _ (Node rri _ _ _))) = i > rri
 rightGrandchildOK _ = True
