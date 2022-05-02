@@ -72,7 +72,7 @@ inorder (Node _ Empty x Empty) = [x]
 inorder (Node _ Empty x r)     = x : inorder r
 inorder (Node _ l x r)         = inorder l ++ (x : inorder r)
 
--- O(1)
+-- O(n)
 size :: AATree a -> Int
 size Empty = 0
 size n = length (inorder n)
