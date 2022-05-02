@@ -52,7 +52,8 @@ insert n@(Node i l v r) input =
     else if input < v
       then split(skew(Node i (insert l input) v r))
       else split(skew(Node i l v (insert r input)))
-insert Empty input = Node 1 Empty input Empty
+insert Empty input = Node 1 Empty input Empty 
+
 
 inorder :: AATree a -> [a]
 inorder Empty = []
