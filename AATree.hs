@@ -16,12 +16,12 @@ module AATree (
 --------------------------------------------------------------------------------
 
 -- AA search trees
-data AATree a 
-  = Empty 
-  | Node { 
-  level :: Int, 
-  left :: AATree a, 
-  value :: a, 
+data AATree a
+  = Empty
+  | Node {
+  level :: Int,
+  left :: AATree a,
+  value :: a,
   right :: AATree a }
   deriving (Eq, Show, Read)
 
@@ -30,41 +30,46 @@ emptyTree = Empty
 
 get :: Ord a => a -> AATree a -> Maybe a
 get _ Empty = Nothing
-get input (Node _ l a r) 
+get input (Node _ l a r)
   | input == a = Just a
   | input < a  = get input l
   | otherwise  = get input r
 
 split :: AATree a -> AATree a 
-split (Node i a x (Node yi b y z@(Node zi _ _ _))) 
-  | i == zi = Node (yi+1) (Node i a x b) y z
+split n@(Node i a v (Node ri b rv rr))
+  | not (rightGrandchildOK n) = Node (ri+1) (Node i a v b) rv rr
 split n = n
 
 skew :: AATree a -> AATree a
-skew (Node i (Node xi a x b) y c)
-  | i == xi = Node xi a x (Node i b y c)
+skew n@(Node i (Node li ll lv lr) v r)
+  | not (leftChildOK n) = Node li ll lv (Node i lr v r)
 skew n = n
 
-insert :: Ord a => a -> AATree a -> AATree a
-insert input n@(Node i l v r)
-  | input == v = n
-  | input < v = fixIt(Node i (insert input l) v r)
-  | otherwise = fixIt(Node i l v (insert input r))
-  where fixIt = split . skew
-insert input Empty = Node 1 Empty input Empty
+insert :: Ord a => AATree a -> a -> AATree a
+insert n@(Node i l v r) input =
+  if input == v
+    then n
+    else if input < v
+      then split(skew(Node i (insert l input) v r))
+      else split(skew(Node i l v (insert r input)))
+insert Empty input = Node 1 Empty input Empty
 
 inorder :: AATree a -> [a]
 inorder Empty = []
 inorder (Node _ Empty x Empty) = [x]
-inorder (Node _ Empty x r)     = x : inorder r 
-inorder (Node _ l x r)         = (inorder l ++ (x : inorder r))
+inorder (Node _ Empty x r)     = x : inorder r
+inorder (Node _ l x r)         = inorder l ++ (x : inorder r)
 
 size :: AATree a -> Int
+size Empty = 0
 size n = length (inorder n)
 
 height :: AATree a -> Int
 height Empty = 0
-height (Node i _ _ _) = i
+height (Node _ l _ r) 
+  | size r > size l  = 1 + height r 
+  | otherwise        = 1 + height l
+
 
 --------------------------------------------------------------------------------
 -- Optional function
@@ -88,7 +93,7 @@ checkTree root =
 isSorted :: Ord a => [a] -> Bool
 isSorted []       = True
 isSorted [x]      = True
-isSorted (x:y:xs) 
+isSorted (x:y:xs)
   | x < y     = isSorted (y:xs)
   | otherwise = False
 
