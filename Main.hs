@@ -38,11 +38,11 @@ main = do
   
   -- calculate and print statistics
   -- use fromIntegral/ceiling/logBase
-  putStrLn ("size: " ++ show (size tree))
-  putStrLn ("height: " ++ show (height tree))
-  putStrLn ("optimalHeight: " ++ show (optimalHeight tree))
-  putStrLn ("ratio: " ++ show (ratio tree))
-  putStrLn ("checkTree: " ++ show (checkTree tree))
+  putStrLn ("size: "             ++ show (size tree))
+  putStrLn ("height: "           ++ show (height tree))
+  putStrLn ("optimalHeight: "    ++ show (optimalHeight tree))
+  putStrLn ("ratio: "            ++ show (ratio tree))
+  putStrLn ("checkTree: "        ++ show (checkTree tree))
   putStrLn ("firstTwentyWords: " ++ show (firstTwentyWords tree))
 
 --------------------------------------------------------------------------------
