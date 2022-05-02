@@ -25,9 +25,11 @@ data AATree a
   right :: AATree a }
   deriving (Eq, Show, Read)
 
+-- O(1)
 emptyTree :: AATree a
 emptyTree = Empty
 
+-- O(log n)
 get :: Ord a => a -> AATree a -> Maybe a
 get _ Empty = Nothing
 get input (Node _ l a r)
@@ -35,16 +37,25 @@ get input (Node _ l a r)
   | input < a  = get input l
   | otherwise  = get input r
 
+-- O(1)
 split :: AATree a -> AATree a 
 split n@(Node i a v (Node ri b rv rr))
   | not (rightGrandchildOK n) = Node (ri+1) (Node i a v b) rv rr
 split n = n
 
+-- O(1)
 skew :: AATree a -> AATree a
 skew n@(Node i (Node li ll lv lr) v r)
   | not (leftChildOK n) = Node li ll lv (Node i lr v r)
 skew n = n
 
+-- O(log n)
+{- I första fallet kollar vi om värdet på den nya noden är lika med värdet på noden i trädet
+i detta fallet ignoreras inserten, annars kollar vi om den är lägre eller större och traverserar 
+trädet tills vi kommer till en tom plats och lägger in den nya noden där. Efter detta skewar och splittar
+vi för att se till att invarianten håller, logiken för att se om ett träd behöver skewas/splittas finns i 
+respektive funktion och inte i insert. 
+-}
 insert :: Ord a => AATree a -> a -> AATree a
 insert n@(Node i l v r) input =
   if input == v
@@ -54,7 +65,7 @@ insert n@(Node i l v r) input =
       else split(skew(Node i l v (insert r input)))
 insert Empty input = Node 1 Empty input Empty 
 
-
+-- O(n)
 inorder :: AATree a -> [a]
 inorder Empty = []
 inorder (Node _ Empty x Empty) = [x]
