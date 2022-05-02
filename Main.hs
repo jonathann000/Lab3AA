@@ -30,14 +30,10 @@ firstTwentyWords t = unwords(take 20 (inorder t))
 
 main :: IO ()
 main = do
-  contents <- readFile "swahili-small.txt"
+  contents <- readFile "sorted-small.txt"
 
-  -- spl it the data into words and build an AA tree
-  -- use foldl
   let tree = stringToTree contents
   
-  -- calculate and print statistics
-  -- use fromIntegral/ceiling/logBase
   putStrLn ("size: "             ++ show (size tree))
   putStrLn ("height: "           ++ show (height tree))
   putStrLn ("optimalHeight: "    ++ show (optimalHeight tree))
