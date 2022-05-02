@@ -7,19 +7,22 @@
 -}
 
 import AATree
-
+-- O(n log n), foldl = O(n), insert = O(log n), words = O(n). (foldl * insert) + words
 testFold :: String -> AATree String
 testFold s = foldl insert emptyTree (words s)
 
+-- O(n)
 optimalHeight :: AATree a -> Int
 optimalHeight t = ceiling(logBase 2 (fromIntegral(n + 1)) - 1)
   where n = size t
 
+-- O(n)
 ratio :: AATree a -> Float
 ratio t = h/h'
   where h  = fromIntegral(height t)
         h' = fromIntegral(optimalHeight t)
 
+-- O(n)
 firstTwentyWords :: AATree String -> String 
 firstTwentyWords t = unwords(take 20 (inorder t))
 
