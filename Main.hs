@@ -1,4 +1,7 @@
 {-
+  Grupp  : 10
+  Authors: Jonathan Naumanen, Alexander Stenström, Adam Williams
+
   to run:
   $ ghc -e main Main.hs < swahili-small.txt
 

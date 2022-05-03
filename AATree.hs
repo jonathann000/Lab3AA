@@ -66,6 +66,9 @@ insert n@(Node i l v r) input =
 insert Empty input = Node 1 Empty input Empty 
 
 -- O(n)
+{- Vi traverserar listan neråt till den mest vänstra noden och längs vägen kallar rekursivt
+funktionen på samtliga högerbarn och lägger till elementen i den ordningen.
+-}
 inorder :: AATree a -> [a]
 inorder Empty = []
 inorder (Node _ Empty x Empty) = [x]
@@ -75,14 +78,24 @@ inorder (Node _ l x r)         = inorder l ++ (x : inorder r)
 -- O(n)
 size :: AATree a -> Int
 size Empty = 0
-size n = length (inorder n)
-
--- O(log n)
+size n     = length (inorder n)
+{-- 
 height :: AATree a -> Int
 height Empty = 0
-height (Node _ l _ r) 
-  | size r > size l  = 1 + height r 
-  | otherwise        = 1 + height l
+height (Node _ _ _ r) = 1 + height r
+
+--O(n^2)
+height :: AATree a -> Int
+height Empty = 0
+height n@(Node _ l _ r) 
+  | aaHeight r == aaHeight n    = 1 + height r 
+  | otherwise                   = 1 + height l
+  where aaHeight (Node i _ _ _) = i
+        aaHeight Empty          = 0
+-}
+height :: AATree a -> Int
+height Empty = 0
+height (Node _ l _ r) = 1 + max (height l) (height r)
 
 
 --------------------------------------------------------------------------------
@@ -93,7 +106,7 @@ remove = error "remove not implemented"
 
 --------------------------------------------------------------------------------
 -- Check that an AA tree is ordered and obeys the AA invariants
---(O)
+-- O(1)
 checkTree :: Ord a => AATree a -> Bool
 checkTree root =
   isSorted (inorder root) &&
@@ -106,7 +119,7 @@ checkTree root =
 --O(n)
 isSorted :: Ord a => [a] -> Bool
 isSorted []       = True
-isSorted [x]      = True
+isSorted [_]      = True
 isSorted (x:y:xs)
   | x < y     = isSorted (y:xs)
   | otherwise = False
