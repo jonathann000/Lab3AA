@@ -1,5 +1,10 @@
 {-# OPTIONS -Wall #-}
 
+{-
+  Grupp  : 10
+  Authors: Jonathan Naumanen, Alexander Stenström, Adam Williams
+-}
+
 --------------------------------------------------------------------------------
 
 module AATree (
@@ -79,20 +84,8 @@ inorder (Node _ l x r)         = inorder l ++ (x : inorder r)
 size :: AATree a -> Int
 size Empty = 0
 size n     = length (inorder n)
-{-- 
-height :: AATree a -> Int
-height Empty = 0
-height (Node _ _ _ r) = 1 + height r
 
---O(n^2)
-height :: AATree a -> Int
-height Empty = 0
-height n@(Node _ l _ r) 
-  | aaHeight r == aaHeight n    = 1 + height r 
-  | otherwise                   = 1 + height l
-  where aaHeight (Node i _ _ _) = i
-        aaHeight Empty          = 0
--}
+-- O(n)
 height :: AATree a -> Int
 height Empty = 0
 height (Node _ l _ r) = 1 + max (height l) (height r)
@@ -106,7 +99,7 @@ remove = error "remove not implemented"
 
 --------------------------------------------------------------------------------
 -- Check that an AA tree is ordered and obeys the AA invariants
--- O(1)
+-- O(n)
 checkTree :: Ord a => AATree a -> Bool
 checkTree root =
   isSorted (inorder root) &&
@@ -116,7 +109,7 @@ checkTree root =
       | isEmpty x = []
       | otherwise = x:nodes (leftSub x) ++ nodes (rightSub x)
 
---O(n)
+-- O(n)
 isSorted :: Ord a => [a] -> Bool
 isSorted []       = True
 isSorted [_]      = True
@@ -124,47 +117,39 @@ isSorted (x:y:xs)
   | x < y     = isSorted (y:xs)
   | otherwise = False
 
--- Check if the invariant is true for a single AA node
--- You may want to write this as a conjunction e.g.
---   checkLevels node =
---     leftChildOK node &&
---     rightChildOK node &&
---     rightGrandchildOK node
--- where each conjunct checks one aspect of the invariant
-
---O(1)
+-- O(1)
 checkLevels :: AATree a -> Bool
 checkLevels Empty = True
 checkLevels node = leftChildOK node &&
                    rightChildOK node &&
                    rightGrandchildOK node
 
---O(1)
+-- O(1)
 isEmpty :: AATree a -> Bool
 isEmpty Empty = True
 isEmpty _     = False
 
---O(1)
+-- O(1)
 leftSub :: AATree a -> AATree a
 leftSub Empty = Empty
 leftSub (Node _ l _ _) = l
 
---O(1)
+-- O(1)
 rightSub :: AATree a -> AATree a
 rightSub Empty = Empty
 rightSub (Node _ _ _ r) = r
 
---O(1)
+-- O(1)
 leftChildOK :: AATree a -> Bool
 leftChildOK (Node i (Node li _ _ _) _ _) = li < i
 leftChildOK _ = True
 
---O(1)
+-- O(1)
 rightChildOK :: AATree a -> Bool
 rightChildOK (Node i _ _ (Node ir _ _ _)) = ir <= i
 rightChildOK _ = True
 
---O(1)
+-- O(1)
 rightGrandchildOK :: AATree a -> Bool
 rightGrandchildOK (Node i _ _ (Node _ _ _ (Node rri _ _ _))) = i > rri
 rightGrandchildOK _ = True
